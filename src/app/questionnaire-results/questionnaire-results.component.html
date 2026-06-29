@@ -1,0 +1,116 @@
+<div class="results-container">
+  @if (hasError) {
+    <div class="error-state">
+      <div class="error-icon">⚠️</div>
+      <h2>發生錯誤</h2>
+      <p>{{ errorMessage }}</p>
+      <a routerLink="/questionnaires" class="btn btn-primary">返回問卷列表</a>
+    </div>
+  } @else if (questionnaire) {
+    <header class="header">
+      <div class="header-content">
+        <button class="btn btn-back" (click)="goBack()">← 返回</button>
+        <h1>{{ questionnaire.title }}</h1>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- 統計概覽 -->
+      <section class="stats-section">
+        <div class="stats-cards">
+          <div class="stat-card">
+            <div class="stat-value">{{ stats.totalResponses }}</div>
+            <div class="stat-label">總回應數</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ stats.recentResponses }}</div>
+            <div class="stat-label">24小時內回應</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ questionnaire.questions.length }}</div>
+            <div class="stat-label">題目數量</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 題目統計 -->
+      @if (responses.length === 0) {
+        <section class="empty-section">
+          <div class="empty-icon">📊</div>
+          <h3>尚無回應</h3>
+          <p>目前還沒有任何人填寫此問卷</p>
+        </section>
+      } @else {
+        <section class="questions-section">
+          @for (question of questionnaire.questions; track question.id) {
+            <div class="question-result-card">
+              <div class="question-header">
+                <span class="question-number">題目 {{ $index + 1 }}</span>
+                <span class="question-text">{{ question.title }}</span>
+                <span class="question-type">{{ getTypeLabel(question.type) }}</span>
+              </div>
+
+              <!-- 文字題：顯示所有回應 -->
+              @if (question.type === 'text') {
+                <div class="text-responses">
+                  @for (response of responses; track response.id) {
+                    <div class="text-response-item">
+                      <span class="response-index">{{ $index + 1 }}</span>
+                      <span class="response-text">{{ getResponseText(question, response.responses) }}</span>
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- 單選/複選題：顯示統計圖表 -->
+              @if (question.type === 'radio' || question.type === 'checkbox') {
+                <div class="chart-section">
+                  @if (question.options) {
+                    @for (option of question.options; track option) {
+                      <div class="chart-bar-row">
+                        <span class="option-label">{{ option }}</span>
+                        <div class="chart-bar-container">
+                          <div
+                            class="chart-bar"
+                            [style.width.%]="getPercentage(getResponseCount(question)[option] || 0)"
+                            [style.background]="getBarGradient($index)">
+                          </div>
+                        </div>
+                        <span class="chart-value">
+                          {{ getResponseCount(question)[option] || 0 }} ({{ getPercentage(getResponseCount(question)[option] || 0) }}%)
+                        </span>
+                      </div>
+                    }
+                  }
+                </div>
+              }
+            </div>
+          }
+        </section>
+
+        <!-- 詳細回應列表 -->
+        <section class="responses-section">
+          <h2>詳細回應列表</h2>
+          <div class="responses-list">
+            @for (response of responses; track response.id) {
+              <div class="response-card">
+                <div class="response-header">
+                  <span class="response-number">回應 #{{ $index + 1 }}</span>
+                  <span class="response-time">{{ formatDate(response.submittedAt) }}</span>
+                </div>
+                <div class="response-details">
+                  @for (question of questionnaire.questions; track question.id) {
+                    <div class="response-item">
+                      <span class="item-question">{{ question.title }}</span>
+                      <span class="item-answer">{{ getResponseText(question, response.responses) }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      }
+    </main>
+  }
+</div>

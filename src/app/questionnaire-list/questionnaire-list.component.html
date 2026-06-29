@@ -1,0 +1,75 @@
+<div class="list-container">
+  <div class="page-header">
+    <h1>問卷列表</h1>
+  </div>
+
+  <!-- 查詢區 -->
+  <div class="search-panel">
+    <div class="form-row">
+      <div class="form-group">
+        <label>問卷名稱</label>
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          placeholder="標題模糊搜尋">
+      </div>
+
+      <div class="form-group">
+        <label>開始 / 結束時間</label>
+        <div class="date-range">
+          <input type="date" [(ngModel)]="startDate" name="startDate">
+          <span>~</span>
+          <input type="date" [(ngModel)]="endDate" name="endDate">
+        </div>
+      </div>
+
+      <button class="btn-search" type="button" (click)="onSearch()">搜尋</button>
+    </div>
+  </div>
+
+  <!-- 表格 -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>編號</th>
+          <th>名稱</th>
+          <th>狀態</th>
+          <th>開始時間</th>
+          <th>結束時間</th>
+          <th>結果</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let questionnaire of displayedQuestionnaires; let idx = index; trackBy: trackById">
+          <td>{{ (currentPage - 1) * pageSize + idx + 1 }}</td>
+          <td>{{ questionnaire.title }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="{
+              'badge-unpublished': getStatus(questionnaire) === '未發布',
+              'badge-soon': getStatus(questionnaire) === '尚未開始',
+              'badge-active': getStatus(questionnaire) === '進行中',
+              'badge-closed': getStatus(questionnaire) === '已關閉'
+            }">
+              {{ getStatus(questionnaire) }}
+            </span>
+          </td>
+          <td>{{ formatDateShort(questionnaire.startAt) }}</td>
+          <td>{{ formatDateShort(questionnaire.endAt) }}</td>
+          <td class="action-buttons">
+            <a *ngIf="canFill(questionnaire)" [routerLink]="['/fill', questionnaire.id]" class="btn-fill">
+              前往
+            </a>
+            <span *ngIf="!canFill(questionnaire)">不可填寫</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button type="button" class="btn-search" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">上一頁</button>
+    <span>第 {{ currentPage }} / {{ totalPages }} 頁</span>
+    <button type="button" class="btn-search" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">下一頁</button>
+  </div>
+</div>

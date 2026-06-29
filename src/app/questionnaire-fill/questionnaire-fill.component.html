@@ -1,0 +1,86 @@
+<div class="fill-container">
+  <ng-container *ngIf="hasError; else content">
+    <div class="error-state">
+      <div class="error-icon">⚠️</div>
+      <h2>發生錯誤</h2>
+      <p>{{ errorMessage }}</p>
+      <button class="btn btn-primary" (click)="goBack()">返回問卷列表</button>
+    </div>
+  </ng-container>
+
+  <ng-template #content>
+    <ng-container *ngIf="isSubmitted; else formContent">
+      <div class="success-state">
+        <div class="success-icon">✅</div>
+        <h2>感謝您的填寫！</h2>
+        <p>您已成功提交問卷</p>
+        <a routerLink="/questionnaires" class="btn btn-primary">返回問卷列表</a>
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #formContent>
+    <ng-container *ngIf="questionnaire">
+      <header class="header">
+        <h1>{{ questionnaire.title }}</h1>
+        <p class="description" *ngIf="questionnaire.description">{{ questionnaire.description }}</p>
+      </header>
+
+      <main class="main-content">
+        <form (ngSubmit)="submitForm()" class="questionnaire-form">
+          <div *ngFor="let question of questionnaire.questions; let i = index; trackBy: trackByQuestionId" class="question-card">
+            <div class="question-title">
+              <span class="question-number">{{ i + 1 }}</span>
+              <span class="question-text">{{ question.title }}</span>
+              <span class="required" *ngIf="question.required">*</span>
+            </div>
+
+            <ng-container [ngSwitch]="question.type">
+              <input
+                *ngSwitchCase="'text'"
+                type="text"
+                [(ngModel)]="responses[question.id]"
+                [name]="'response_' + question.id"
+                [required]="question.required"
+                placeholder="請輸入您的答案">
+
+              <ng-container *ngSwitchCase="'radio'">
+                <div class="options-list" *ngIf="question.options">
+                  <label class="radio-option" *ngFor="let option of question.options">
+                    <input
+                      type="radio"
+                      [name]="'response_' + question.id"
+                      [value]="option"
+                      [(ngModel)]="responses[question.id]"
+                      [required]="question.required">
+                    <span class="radio-custom"></span>
+                    <span class="option-text">{{ option }}</span>
+                  </label>
+                </div>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'checkbox'">
+                <div class="options-list" *ngIf="question.options">
+                  <label class="checkbox-option" *ngFor="let option of question.options">
+                    <input
+                      type="checkbox"
+                      [name]="'response_' + question.id + '_' + option"
+                      [value]="option"
+                      (change)="onCheckboxChange(question.id, option, $event)">
+                    <span class="checkbox-custom"></span>
+                    <span class="option-text">{{ option }}</span>
+                  </label>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" (click)="goBack()">返回</button>
+            <button type="submit" class="btn btn-primary">提交問卷</button>
+          </div>
+        </form>
+      </main>
+    </ng-container>
+  </ng-template>
+</div>

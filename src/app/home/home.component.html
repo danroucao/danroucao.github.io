@@ -1,0 +1,55 @@
+<div class="home-container">
+  <header class="hero">
+    <h1>Welcome to Questionnaire</h1>
+    <p class="subtitle">供使用者創建、分享和分析問卷的網站</p>
+  </header>
+
+  <main class="main-content">
+
+    <div class="action-cards">
+      <div class="card">
+        <h2>創建問卷</h2>
+        <p>設計您的專屬問卷，支持多種題型</p>
+        <button (click)="onCreate()" class="btn btn-primary">開始創建</button>
+      </div>
+
+      <div class="card">
+        <h2>填寫問卷</h2>
+        <p>瀏覽並填寫現有的問卷</p>
+        <a routerLink="/questionnaires" class="btn btn-primary">查看問卷</a>
+      </div>
+    </div>
+
+    <section class="features">
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <img src="/design.png" class="feature-icon"/>
+          </div>
+          <h3>設計問卷</h3>
+          <p>設計您的專屬問卷，支持多種題型</p>
+        </div>
+
+        <div class="feature-item" style="border: #5773995c solid 3px;">
+          <div class="feature-icon">
+            <img src="/collect.png" class="feature-icon"/>
+          </div>
+          <h3>蒐集回覆</h3>
+          <p>跨裝置流暢填答，回收大量樣本</p>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">
+            <img src="/analysis.png" class="feature-icon"/>
+          </div>
+          <h3>分析數據</h3>
+          <p>分析問卷回應與統計數據</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+
+  </footer>
+</div>

@@ -1,0 +1,89 @@
+<div class="list-container">
+  <div class="page-header">
+    <h1>問卷管理系統</h1>
+  </div>
+
+  <!-- 查詢區 -->
+  <div class="search-panel">
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>問卷名稱</label>
+        <input type="text" placeholder="請輸入問卷名稱">
+      </div>
+
+      <div class="form-group">
+        <label>建立日期</label>
+        <div class="date-range">
+          <input type="date">
+          <span>~</span>
+          <input type="date">
+        </div>
+      </div>
+
+      <button class="btn-search">查詢</button>
+    </div>
+  </div>
+
+  <!-- 工具列 -->
+  <div class="toolbar">
+    <a routerLink="/create" class="btn-create">＋ 新增問卷</a>
+  </div>
+
+  <!-- 表格 -->
+  <div class="table-wrapper">
+
+    <table>
+      <thead>
+        <tr>
+          <th>問卷名稱</th>
+          <th>狀態</th>
+          <th>題數</th>
+          <th>回覆數</th>
+          <th>開始時間</th>
+          <th>結束時間</th>
+          <th>建立日期</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let questionnaire of questionnaires; trackBy: trackById">
+          <td>{{ questionnaire.title }}</td>
+
+          <td>
+            <span class="status-badge" [ngClass]="{
+              'badge-unpublished': getStatus(questionnaire) === '未發布',
+              'badge-soon': getStatus(questionnaire) === '尚未開始',
+              'badge-active': getStatus(questionnaire) === '進行中',
+              'badge-closed': getStatus(questionnaire) === '已關閉'
+            }">
+              {{ getStatus(questionnaire) }}
+            </span>
+          </td>
+
+          <td>{{ questionnaire.questions.length }}</td>
+          <td>{{ getStats(questionnaire.id).totalResponses }}</td>
+          <td>{{ formatDateTime(questionnaire.startAt) }}</td>
+          <td>{{ formatDateTime(questionnaire.endAt) }}</td>
+          <td>{{ formatDate(questionnaire.createdAt) }}</td>
+
+          <td class="action-buttons">
+            <a [routerLink]="['/edit', questionnaire.id]" class="btn-table" [class.disabled]="!isEditable(questionnaire)" [attr.aria-disabled]="!isEditable(questionnaire)">
+              編輯
+            </a>
+
+            <a [routerLink]="['/results', questionnaire.id]" class="btn-table">
+              結果
+            </a>
+
+            <!-- 後台不可直接填寫；若要填寫請至前台問卷列表 -->
+
+            <button class="btn-delete" (click)="deleteQuestionnaire(questionnaire.id)" [disabled]="!isDeletable(questionnaire)">刪除</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+

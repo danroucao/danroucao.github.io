@@ -1,0 +1,218 @@
+<div class="editor-container">
+  <header class="header">
+    <div>
+      <p class="eyebrow">問卷編輯</p>
+      <h1>{{ isEditMode ? '編輯問卷' : '建立問卷' }}</h1>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-outline" (click)="cancel()">取消</button>
+      <button type="submit" form="questionnaireEditorForm" class="btn btn-primary">
+        {{ isEditMode ? '儲存變更' : '建立問卷' }}
+      </button>
+    </div>
+  </header>
+
+  <main class="editor-shell">
+    <form id="questionnaireEditorForm" (ngSubmit)="saveQuestionnaire()" class="editor-form">
+      <section class="form-section questionnaire-info">
+        <div class="section-title">
+          <span class="section-step">1</span>
+          <div>
+            <h2>問卷資訊</h2>
+            <p>設定受填者看到的問卷名稱與說明。</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="title">問卷標題 <span class="required">*</span></label>
+          <input
+            type="text"
+            id="title"
+            [(ngModel)]="questionnaire.title"
+            name="title"
+            placeholder="例如：課程滿意度調查"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="description">問卷描述</label>
+          <textarea
+            id="description"
+            [(ngModel)]="questionnaire.description"
+            name="description"
+            placeholder="補充填寫說明或問卷目的"
+            rows="3"></textarea>
+        </div>
+
+        <div class="form-row schedule-row">
+          <label class="toggle-row">
+            <input
+              type="checkbox"
+              [(ngModel)]="questionnaire.published"
+              name="published">
+            <span>
+              <strong>問卷已發布</strong>
+              <small>已發布的問卷才會出現在前台問卷列表。</small>
+            </span>
+          </label>
+        </div>
+
+        <div class="form-row schedule-row">
+          <div class="form-group">
+            <label for="startAt">開始時間</label>
+            <input
+              id="startAt"
+              type="datetime-local"
+              [(ngModel)]="startAtValue"
+              name="startAt"
+              [disabled]="!questionnaire.published">
+          </div>
+
+          <div class="form-group">
+            <label for="endAt">結束時間</label>
+            <input
+              id="endAt"
+              type="datetime-local"
+              [(ngModel)]="endAtValue"
+              name="endAt"
+              [disabled]="!questionnaire.published">
+          </div>
+        </div>
+
+        <label class="toggle-row">
+          <input
+            type="checkbox"
+            [(ngModel)]="questionnaire.isActive"
+            name="isActive">
+          <span>
+            <strong>啟用問卷</strong>
+            <small>啟用後受填者可以透過分享連結填寫。</small>
+          </span>
+        </label>
+      </section>
+
+      <section class="form-section question-editor">
+        <div class="section-title">
+          <span class="section-step">2</span>
+          <div>
+            <h2>題目編輯區</h2>
+            <p>從右側選擇題型新增題目，拖曳題目卡可調整順序。</p>
+          </div>
+        </div>
+
+        <div *ngIf="!questionnaire.questions || questionnaire.questions.length === 0" class="empty-questions">
+          <div class="empty-icon">+</div>
+          <h3>尚未新增題目</h3>
+          <p>請從右側題型清單選擇一種題目開始編輯。</p>
+        </div>
+
+        <div class="questions-list">
+          <article
+            *ngFor="let question of questionnaire.questions; let i = index; trackBy: trackByQuestionId"
+            class="question-card"
+            [class.is-dragging]="draggedQuestionId === question.id"
+            draggable="true"
+            (dragstart)="onDragStart(question.id)"
+            (dragover)="onDragOver($event)"
+            (drop)="onDrop(question.id)"
+            (dragend)="onDragEnd()">
+            <div class="question-header">
+              <button type="button" class="drag-handle" title="拖曳排序" aria-label="拖曳排序">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+              <div class="question-heading">
+                <span class="question-number">題目 {{ i + 1 }}</span>
+                <span class="question-type">{{ getTypeLabel(question.type) }}</span>
+              </div>
+
+              <button
+                type="button"
+                class="icon-button danger"
+                (click)="removeQuestion(question.id)"
+                title="刪除題目"
+                aria-label="刪除題目">
+                ×
+              </button>
+            </div>
+
+            <div class="form-group">
+              <label>題目標題 <span class="required">*</span></label>
+              <input
+                type="text"
+                [(ngModel)]="question.title"
+                [name]="'question_title_' + question.id"
+                placeholder="輸入題目內容">
+            </div>
+
+            <div class="question-settings">
+              <div class="form-group">
+                <label>題型</label>
+                <select
+                  [(ngModel)]="question.type"
+                  [name]="'question_type_' + question.id"
+                  (ngModelChange)="onQuestionTypeChange(question)">
+                  <option value="text">單行文字題</option>
+                  <option value="radio">單選題</option>
+                  <option value="checkbox">複選題</option>
+                </select>
+              </div>
+
+              <label class="required-check">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="question.required"
+                  [name]="'question_required_' + question.id">
+                <span>必填</span>
+              </label>
+            </div>
+
+            <div *ngIf="(question.type === 'radio' || question.type === 'checkbox') && question.options" class="options-section">
+              <div class="options-title">
+                <label>選項 <span class="required">*</span></label>
+                <button type="button" class="text-button" (click)="addOption(question)">新增選項</button>
+              </div>
+
+              <div *ngFor="let option of question.options; let idx = index" class="option-row">
+                <span class="option-marker">{{ question.type === 'radio' ? '○' : '□' }}</span>
+                <input
+                  type="text"
+                  [(ngModel)]="question.options[idx]"
+                  [name]="'option_' + question.id + '_' + idx"
+                  placeholder="輸入選項內容">
+                <button
+                  type="button"
+                  class="icon-button danger subtle"
+                  (click)="removeOption(question, idx)"
+                  title="刪除選項"
+                  aria-label="刪除選項">
+                  ×
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </form>
+
+    <aside class="question-type-panel" aria-label="新增題型">
+      <div class="panel-header">
+        <p class="eyebrow">新增題目</p>
+        <h2>選擇題型</h2>
+      </div>
+
+      <div class="type-list">
+        <button type="button" class="type-card" *ngFor="let template of questionTemplates" (click)="addQuestion(template.type)">
+          <span class="type-icon">{{ template.icon }}</span>
+          <span>
+            <strong>{{ template.label }}</strong>
+            <small>{{ template.description }}</small>
+          </span>
+        </button>
+      </div>
+    </aside>
+  </main>
+</div>

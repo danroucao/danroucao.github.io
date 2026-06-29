@@ -1,0 +1,171 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #F7F7FF;
+  padding: 40px;
+}
+
+.list-container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Header */
+
+.page-header {
+  margin-bottom: 24px;
+
+  h1 {
+    color: #495867;
+    font-size: 32px;
+    font-weight: 700;
+  }
+}
+
+/* Search */
+
+.search-panel {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  align-items: end;
+}
+
+.form-group {
+  flex: 1;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #444;
+    font-weight: 600;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #495867;
+    border-radius: 10px;
+  }
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Search Button */
+
+.btn-search {
+  height: 44px;
+  border: none;
+  background: #F3C262;
+  color: #333;
+  padding: 0 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Toolbar */
+
+.toolbar {
+  margin-bottom: 16px;
+}
+
+.btn-create {
+  display: inline-block;
+  background: #577399;
+  color: white;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: .3s;
+}
+
+.btn-create:hover {
+  background: #d84e40;
+}
+
+/* Table */
+
+.table-wrapper {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #495867;
+}
+
+thead th {
+  padding: 16px;
+  text-align: left;
+  color: white;
+}
+
+tbody td {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+  background: #faf7f4;
+}
+
+/* Status */
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.status-badge.badge-active {
+  background: #d2ffbf;
+  color: rgb(63, 169, 24);
+}
+
+.status-badge:not(.badge-active) {
+  background: #ec9a86;
+  color: white;
+}
+
+/* Actions */
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-table {
+  text-decoration: none;
+  background: #577399;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.btn-fill {
+  text-decoration: none;
+  background: #F3C262;
+  color: #333;
+  padding: 6px 12px;
+  border-radius: 8px;
+}

@@ -1,0 +1,23 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <div class="nav-home">
+      <img src="/home.svg" routerLink="/" class="nav-icon"/>
+      <a routerLink="/" class="nav-brand">回首頁</a>
+    </div>
+    <div class="nav-links">
+      <ng-container *ngIf="isLoggedIn(); else loggedOut">
+        <a routerLink="/backend" routerLinkActive="active">建立問卷</a>
+        <a routerLink="/questionnaires" routerLinkActive="active">填寫問卷</a>
+        <a (click)="logout()">登出</a>
+        <button class="avatar-btn" (click)="goToMember()" title="會員資料">
+          <img src="/avatar.png" alt="avatar" class="avatar-img" />
+        </button>
+      </ng-container>
+      <ng-template #loggedOut>
+              <a routerLink="/questionnaires" routerLinkActive="active">問卷列表</a>
+        <a routerLink="/login" routerLinkActive="active">登入/註冊</a>
+      </ng-template>
+    </div>
+  </div>
+</nav>
+<router-outlet></router-outlet>
