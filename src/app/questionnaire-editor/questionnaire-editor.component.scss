@@ -484,12 +484,10 @@
   .editor-shell {
     grid-template-columns: 1fr;
     padding: 1rem;
-  }
-
-  .question-type-panel {
     position: static;
     order: -1;
   }
+
 }
 
 @media (max-width: 640px) {
